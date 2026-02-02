@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "425233376459",
+    "project_id": "balapan-de654",
+    "storage_bucket": "balapan-de654.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425233376459:android:a1eedf14d19aabfab8674e",
+        "android_client_info": {
+          "package_name": "com.example.my_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUxU0Ab4iJ5DXkehcAoTy49pxq4iG9yck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
