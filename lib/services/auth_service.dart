@@ -507,9 +507,12 @@ class AuthService {
     if (anketas.docs.isNotEmpty) {
       final docId = anketas.docs.first.id;
       final currentRating = anketas.docs.first.data()['likesCount'] ?? 0;
-      await _firestore.collection('anketas').doc(docId).update({
-        'likesCount': isLike ? currentRating + 1 : currentRating - 1,
-      });
+      // Только положительные отзывы увеличивают счетчик сердец
+      if (isLike) {
+        await _firestore.collection('anketas').doc(docId).update({
+          'likesCount': currentRating + 1,
+        });
+      }
     }
   }
 
@@ -527,9 +530,12 @@ class AuthService {
     if (anketas.docs.isNotEmpty) {
       final docId = anketas.docs.first.id;
       final currentRating = anketas.docs.first.data()['likesCount'] ?? 0;
-      await _firestore.collection('anketas').doc(docId).update({
-        'likesCount': wasLike ? currentRating - 1 : currentRating + 1,
-      });
+      // Если удаляемый отзыв был лайком, уменьшаем счетчик сердец
+      if (wasLike) {
+        await _firestore.collection('anketas').doc(docId).update({
+          'likesCount': currentRating - 1,
+        });
+      }
     }
   }
 
@@ -558,12 +564,19 @@ class AuthService {
       if (anketas.docs.isNotEmpty) {
         final docId = anketas.docs.first.id;
         final currentRating = anketas.docs.first.data()['likesCount'] ?? 0;
-        // If it was a like and now it's a dislike: -1 then -1 = -2
-        // If it was a dislike and now it's a like: +1 then +1 = +2
-        int adjustment = newIsLike ? 2 : -2;
-        await _firestore.collection('anketas').doc(docId).update({
-          'likesCount': currentRating + adjustment,
-        });
+        
+        int adjustment = 0;
+        if (!wasLike && newIsLike) {
+          adjustment = 1; // Стал лайком
+        } else if (wasLike && !newIsLike) {
+          adjustment = -1; // Перестал быть лайком
+        }
+
+        if (adjustment != 0) {
+          await _firestore.collection('anketas').doc(docId).update({
+            'likesCount': currentRating + adjustment,
+          });
+        }
       }
     }
   }
